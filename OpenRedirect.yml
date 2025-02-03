@@ -1,0 +1,33 @@
+id: open-redirect-login-test
+
+info:
+  name: Open Redirect in Login Pages
+  author: YourName
+  severity: medium
+  description: |
+    Detects potential open redirect vulnerabilities in login endpoints by injecting external URLs into the `redirect` parameter.
+  tags: redirect,open-redirect,security,auth
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/login?redirect=https://evil.com"
+      - "{{BaseURL}}/signin?redirect=https://evil.com"
+      - "{{BaseURL}}/auth/login?next=https://evil.com"
+      - "{{BaseURL}}/account/login?return=https://evil.com"
+    
+    redirects: true
+    max-redirects: 5
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 302
+          - 301
+      
+      - type: regex
+        part: header
+        regex:
+          - "(?i)location:\\s*https://evil\\.com"
+
