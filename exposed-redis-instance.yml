@@ -1,0 +1,32 @@
+id: exposed-redis-instance
+
+info:
+  name: Exposed Redis Instance
+  author: YourName
+  severity: high
+  description: |
+    Detects publicly accessible Redis instances, which could allow attackers to read/write to the Redis store.
+  tags: redis,exposure,misconfiguration,services
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}:6379"  # Default Redis port
+      - "{{BaseURL}}:6380"  # Alternate Redis port
+      - "{{BaseURL}}:16379" # Redis alternative port
+      - "{{BaseURL}}:16380" # Another Redis alternative port
+
+    matchers-condition: or
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "ERR"
+          - "NOAUTH"
+          - "PONG"
+        condition: or
+
+      - type: status
+        status:
+          - 200
+          - 403
