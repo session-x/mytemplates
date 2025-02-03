@@ -1,0 +1,68 @@
+id: missing-http-security-headers
+
+info:
+  name: Missing HTTP Security Headers
+  author: YourName
+  severity: high
+  description: |
+    Detects the absence of important HTTP security headers that are necessary for securing web applications.
+  tags: security,headers,misconfigurations,ssl
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "Strict-Transport-Security"
+        condition: not
+
+      - type: word
+        part: header
+        words:
+          - "X-Content-Type-Options"
+        condition: not
+
+      - type: word
+        part: header
+        words:
+          - "X-Frame-Options"
+        condition: not
+
+      - type: word
+        part: header
+        words:
+          - "X-XSS-Protection"
+        condition: not
+
+      - type: word
+        part: header
+        words:
+          - "Content-Security-Policy"
+        condition: not
+
+      - type: word
+        part: header
+        words:
+          - "Referrer-Policy"
+        condition: not
+
+      - type: word
+        part: header
+        words:
+          - "Permissions-Policy"
+        condition: not
+
+      - type: word
+        part: header
+        words:
+          - "Feature-Policy"
+        condition: not
+
+      - type: status
+        status:
+          - 200
