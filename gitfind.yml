@@ -1,0 +1,109 @@
+id: exposed-git-repo-extensive
+
+info:
+  name: Extensive Exposed .git Repository Check
+  author: YourName
+  severity: high
+  description: |
+    Detects publicly accessible .git repositories that can lead to source code leakage.
+  tags: git,exposure,leak,sensitive
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/.git/config"
+      - "{{BaseURL}}/.git/HEAD"
+      - "{{BaseURL}}/.git/index"
+      - "{{BaseURL}}/.git/logs/HEAD"
+      - "{{BaseURL}}/.git/refs/heads/main"
+      - "{{BaseURL}}/.git/refs/heads/master"
+      - "{{BaseURL}}/.git/refs/remotes/origin/HEAD"
+      - "{{BaseURL}}/.git/objects/info/packs"
+      - "{{BaseURL}}/.git/objects/pack/pack-*.idx"
+      - "{{BaseURL}}/.git/objects/pack/pack-*.pack"
+      - "{{BaseURL}}/.git/refs/tags"
+      - "{{BaseURL}}/.git/logs/refs/heads/main"
+      - "{{BaseURL}}/.git/logs/refs/heads/master"
+      - "{{BaseURL}}/.git/logs/refs/remotes/origin/HEAD"
+      - "{{BaseURL}}/.git/packed-refs"
+      - "{{BaseURL}}/.git/info/refs"
+      - "{{BaseURL}}/.git/info/exclude"
+      - "{{BaseURL}}/.git/COMMIT_EDITMSG"
+      - "{{BaseURL}}/.git/branches"
+      - "{{BaseURL}}/.git/description"
+      - "{{BaseURL}}/.git/FETCH_HEAD"
+      - "{{BaseURL}}/.git/HEAD.lock"
+      - "{{BaseURL}}/.git/hooks/applypatch-msg.sample"
+      - "{{BaseURL}}/.git/hooks/pre-applypatch.sample"
+      - "{{BaseURL}}/.git/hooks/post-update.sample"
+      - "{{BaseURL}}/.git/hooks/pre-commit.sample"
+      - "{{BaseURL}}/.git/hooks/pre-rebase.sample"
+      - "{{BaseURL}}/.git/hooks/commit-msg.sample"
+      - "{{BaseURL}}/.git/hooks/pre-push.sample"
+      - "{{BaseURL}}/.git/hooks/update.sample"
+      - "{{BaseURL}}/.git/hooks/pre-receive"
+      - "{{BaseURL}}/.git/hooks/post-receive"
+      - "{{BaseURL}}/.git/hooks/post-checkout"
+      - "{{BaseURL}}/.git/hooks/post-merge"
+      - "{{BaseURL}}/.git/hooks/post-commit"
+      - "{{BaseURL}}/.git/hooks/pre-auto-gc"
+      - "{{BaseURL}}/.git/hooks/push-to-checkout"
+      - "{{BaseURL}}/.git/hooks/fsmonitor-watchman"
+      - "{{BaseURL}}/.git/hooks/sendemail-validate"
+      - "{{BaseURL}}/.git/MERGE_HEAD"
+      - "{{BaseURL}}/.git/MERGE_MSG"
+      - "{{BaseURL}}/.git/ORIG_HEAD"
+      - "{{BaseURL}}/.git/REBASE_HEAD"
+      - "{{BaseURL}}/.git/refs/remotes/origin/main"
+      - "{{BaseURL}}/.git/refs/remotes/origin/master"
+      - "{{BaseURL}}/.git/refs/remotes/origin/develop"
+      - "{{BaseURL}}/.git/refs/remotes/origin/feature"
+      - "{{BaseURL}}/.git/refs/remotes/origin/hotfix"
+      - "{{BaseURL}}/.git/refs/stash"
+      - "{{BaseURL}}/.git/svn"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/main"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/master"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/develop"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/feature"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/hotfix"
+      - "{{BaseURL}}/.git/svn/index"
+      - "{{BaseURL}}/.git/svn/info"
+      - "{{BaseURL}}/.git/svn/logs"
+      - "{{BaseURL}}/.git/svn/logs/HEAD"
+      - "{{BaseURL}}/.git/svn/refs"
+      - "{{BaseURL}}/.git/svn/refs/heads"
+      - "{{BaseURL}}/.git/svn/refs/tags"
+      - "{{BaseURL}}/.git/svn/refs/remotes"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/main"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/master"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/develop"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/feature"
+      - "{{BaseURL}}/.git/svn/refs/remotes/origin/hotfix"
+      - "{{BaseURL}}/.git/svn/refs/stash"
+      - "{{BaseURL}}/.git/svn/refs/notes"
+      - "{{BaseURL}}/.git/svn/logs/refs"
+      - "{{BaseURL}}/.git/svn/logs/refs/remotes"
+      - "{{BaseURL}}/.git/svn/logs/refs/remotes/origin"
+      - "{{BaseURL}}/.git/svn/logs/refs/remotes/origin/main"
+      - "{{BaseURL}}/.git/svn/logs/refs/remotes/origin/master"
+      - "{{BaseURL}}/.git/svn/logs/refs/remotes/origin/develop"
+      - "{{BaseURL}}/.git/svn/logs/refs/remotes/origin/feature"
+      - "{{BaseURL}}/.git/svn/logs/refs/remotes/origin/hotfix"
+      - "{{BaseURL}}/.git/svn/logs/refs/notes"
+      - "{{BaseURL}}/.git/svn/logs/refs/stash"
+
+    matchers-condition: or
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "[core]"
+          - "repositoryformatversion"
+          - "ref: refs/heads/"
+        condition: or
+
+      - type: status
+        status:
+          - 200
