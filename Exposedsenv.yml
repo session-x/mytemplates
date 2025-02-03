@@ -1,0 +1,43 @@
+id: exposed-env-file
+
+info:
+  name: Exposed .env File
+  author: YourName
+  severity: high
+  description: |
+    Detects publicly accessible .env files that may contain sensitive environment variables like database credentials and API keys.
+  tags: env,exposure,leak,sensitive
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/.env"
+      - "{{BaseURL}}/env"
+      - "{{BaseURL}}/.env.local"
+      - "{{BaseURL}}/.env.dev"
+      - "{{BaseURL}}/.env.production"
+      - "{{BaseURL}}/.env.stage"
+      - "{{BaseURL}}/.env.test"
+      - "{{BaseURL}}/.env.backup"
+      - "{{BaseURL}}/.env.old"
+      - "{{BaseURL}}/config/.env"
+      - "{{BaseURL}}/config/env"
+      - "{{BaseURL}}/config/.env.local"
+      - "{{BaseURL}}/config/.env.production"
+
+    matchers-condition: or
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "DB_PASSWORD="
+          - "DB_USER="
+          - "APP_SECRET="
+          - "JWT_SECRET="
+          - "AWS_ACCESS_KEY_ID="
+          - "AWS_SECRET_ACCESS_KEY="
+        condition: or
+
+      - type: status
+        status:
+          - 200
